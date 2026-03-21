@@ -1,7 +1,6 @@
 #include "LPC17xx.h"
 /*
- * Voy a realizar el juego piedra papel, tijera o piedra. Implementando interrupciones (no estoy seguro de esta
- * desicion ya que los requisitos no lo mencionan)
+ * Voy a realizar el juego piedra papel, tijera o piedra.
  *
  * date: 21/03/2026
  * author: Agustin Vera
