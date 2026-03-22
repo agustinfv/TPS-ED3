@@ -1,7 +1,6 @@
 #include "LPC17xx.h"
 /*
- * Voy a realizar el juego piedra papel, tijera o piedra. Implementando interrupciones (no estoy seguro de esta
- * desicion ya que los requisitos no lo mencionan)
+ * Voy a realizar el juego piedra papel, tijera o piedra.
  *
  * date: 21/03/2026
  * author: Agustin Vera
@@ -26,25 +25,19 @@ int main(void){
 
 	while(1){
 		// tengo 8 valores posibles, pero solo los que me sirven son 001(1) piedra, 010(2) papel, 100 (4) tijera
-		switch(~(FIOPIN & 0b111)){
-		int valorControlador = jugadaControlador(index);// valores posibles 0,1,2
-		int ResultadoJugada;
-		}
-		case 1:
-			//piedra
-			ResultadoJugada = matriz(0,valorControlador);
-			break;
-		case 2:
-			//papel
-			ResultadoJugada = matriz(1,valorControlador);
-			break;
-		case 4:
-			//tjera
-			ResultadoJugada = matriz(2,valorControlador);
-			break;
+
+		for(int i = 0; i < 8 ; i++)
+		{
+		switch(mapa[i]){
+
+		case ~(FIOPINP0 & 0b111):
+				int valorControlador = jugadaControlador(index);// valores posibles 0,1,2
+				int ResultadoJugada = matriz(mapa[i],valorControlador);//1 indica que gana el jugador, 0 indica empate y -1 indica que gana el microcontrolador
 		default:
 			//no hace nada
 		}
+		}
+
 		index++;
 }
 
@@ -55,7 +48,6 @@ int jugadaControlador(int index){
 
 int matriz( int valorUsuario,int valorControlador)
 {
-	//1 indica que gana el jugador, 0 indica empate y -1 indica que gana el microcontrolador
 	return resultado[valorUsuario][valorControlador];
 
 }
