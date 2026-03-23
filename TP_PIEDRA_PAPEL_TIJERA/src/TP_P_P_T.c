@@ -11,9 +11,10 @@ uint8_t mapearJugada(uint32_t botones);
 // Variables globales
 uint8_t jugada_user = 0;
 uint8_t jugada_LPC = 0;
+uint32_t contador_aleatorio = 0;  // Contador para generar jugada aleatoria
 
 // Matriz de resultados
-int matriz_resultado[3][3] = {
+int matriz_resultado[3][3] = { // 1 gana el jugador, 0 empate, -1 gana el microcontrolador
     { 0, -1, 1},
     { 1, 0, -1},
     {-1, 1, 0}
@@ -46,7 +47,20 @@ int main(void) {
 
 			// El botón ya fue presionado Y SOLTADO, proceso la jugada
 			jugada_user = mapearJugada(boton_presionado);
+			printf("Jugada del usuario: ");
+			switch(jugada_user) {
+			    case 0: printf("PIEDRA\n"); break;
+			    case 1: printf("PAPEL\n"); break;
+			    case 2: printf("TIJERA\n"); break;
+			}
+
 			jugada_LPC = generarJugada();
+			printf("Jugada del LPC: ");
+			switch(jugada_LPC) {
+			    case 0: printf("PIEDRA\n"); break;
+			    case 1: printf("PAPEL\n"); break;
+			    case 2: printf("TIJERA\n"); break;
+			}
 			resultado(jugada_user, jugada_LPC);
         } else {
             // Se presionaron múltiples botones o valor inválido
@@ -77,7 +91,7 @@ void configGPIO(void) {
     LPC_GPIO0->FIODIR |= (0b111 << 4);
 
     // Inicializar LEDs apagados
-    LPC_GPIO0->FIOCLR = (0b111 << 4);
+    LPC_GPIO0->FIOCLR |= (0b111 << 4);
 }
 
 uint8_t mapearJugada(uint32_t botones) {
@@ -86,15 +100,31 @@ uint8_t mapearJugada(uint32_t botones) {
 }
 
 uint8_t generarJugada(void) {
-    // Pendiente implementar
-    return 0;
+	return contador_aleatorio % 3; // Usar el contador para generar un valor entre 0, 1 y 2
 }
 
 void resultado(uint8_t jugada_user, uint8_t jugada_LPC) {
-    // Pendiente implementar
+	 int res;
+	 res = matriz_resultado[jugada_user][jugada_LPC]; // Obtener resultado de la matriz
+	 // Encender LED según resultado y mostrar por consola
+	     if(res == 1) {
+	         // Gana el jugador
+	         LPC_GPIO0->FIOSET = (1 << 4);  // P0.4
+	         printf("RESULTADO: GANA EL JUGADOR\n");
+	     } else if(res == 0) {
+	         // Empate
+	         LPC_GPIO0->FIOSET = (1 << 5);  // P0.5
+	         printf("RESULTADO: EMPATE\n");
+	     } else if(res == -1) {
+	         // Gana el LPC
+	         LPC_GPIO0->FIOSET = (1 << 6);  // P0.6
+	         printf("RESULTADO: GANA EL LPC\n");
+	     }
 }
 
 void delay(void){
 	   uint32_t counter;
-	   for(counter=0 ; counter<6000000 ; counter++ ){};
+	   for(counter=0 ; counter<6000000 ; counter++ ){
+		   contador_aleatorio++;  // Se incrementa en cada iteración
+	   }
 }
