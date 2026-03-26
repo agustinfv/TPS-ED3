@@ -11,10 +11,10 @@
 	//Prototipo de funciones
 void configGPIO();
 
-void delay(void);
+void delay(uint32_t time);
 
 void resultado(uint8_t jugada_user, uint8_t jugada_LPC);	//Calcula el resultado y da las respectivas salidas
-uint8_t matriz_R[3][3] = {		//1 -> ganó el jugador, 0 -> empate, -1 -> ganó el LPC
+int8_t matriz_R[3][3] = {									//1 -> ganó el jugador, 0 -> empate, -1 -> ganó el LPC
  { 0, -1, 1},
  { 1, 0, -1},
  {-1, 1, 0}
@@ -23,8 +23,8 @@ const char* traduccion[] = {"piedra", "papel", "tijera"};	//Variable para rempla
 
 int main(void){
 uint8_t baraja[3]= {0, 1, 2};
-uint8_t jugada_user = -1;
-uint8_t jugada_LPC = -1;
+uint8_t jugada_user = 0;
+uint8_t jugada_LPC = 0;
 
 	configGPIO();
 
@@ -36,20 +36,23 @@ uint8_t jugada_LPC = -1;
 			}
 		}
 
-		switch(LPC_GPIO0->FIOPIN & 0x7){	//Ya que solo se presiona 1 botón a la vez, podemos usar switch
-		case 1:								//Se presionó el 0.0 -> piedra
+		switch(LPC_GPIO0->FIOPIN & 0x7){		//Ya que solo se presiona 1 botón a la vez, podemos usar switch
+		case 1:									//Se presionó el 0.0 -> piedra
+			delay(4000000);						//Antirebote
 			jugada_user = 0;
 			resultado(jugada_user, jugada_LPC);
 			break;
-		case 2:								//Se person el 0.1 -> papel
+		case 2:									//Se presionó el 0.1 -> papel
+			delay(4000000);						//Antirebote
 			jugada_user = 1;
 			resultado(jugada_user, jugada_LPC);
 			break;
-		case 4:								//Se presionó el 0.2 -> tijera
+		case 4:									//Se presionó el 0.2 -> tijera
+			delay(4000000);						//Antirebote
 			jugada_user = 2;
 			resultado(jugada_user, jugada_LPC);
 			break;
-		default:							//En caso default no hago nada, el programa queda en espera.
+		default:								//En caso default no hago nada, el programa queda en espera.
 			break;
 		}
 
@@ -57,18 +60,18 @@ uint8_t jugada_LPC = -1;
 }
 void configGPIO(){
 	//GPIO voy a utilizar el puerto 0.
-	LPC_PINCON->PINSEL0 &= ~(0x3F3F << 0);//recordar que no se usa el P0.3
-	LPC_PINCON->PINMODE0 |= (0x3F << 0);// pull-down activadas
+	LPC_PINCON->PINSEL0 &= ~(0x3F3F << 0);	//recordar que no se usa el P0.3
+	LPC_PINCON->PINMODE0 |= (0x3F << 0);	// pull-down activadas
 	//mascaras?
 
 	//entrada
-	LPC_GPIO0->FIODIR &= ~(0b111<<0);//Pines desde el p0.0 al p0.2
+	LPC_GPIO0->FIODIR &= ~(0b111<<0);		//Pines desde el p0.0 al p0.2
 
 	//salida
-	LPC_GPIO0->FIODIR |= (0b111<<4);//Pines comprendidos desde el p0.4 al p0.6
+	LPC_GPIO0->FIODIR |= (0b111<<4);		//Pines comprendidos desde el p0.4 al p0.6
 
 	//desergenizo
-	LPC_GPIO0->FIOCLR = (0b111<<4);//bits 1110000 (no limpie el p0.3)
+	LPC_GPIO0->FIOCLR = (0b111<<4);			//bits 1110000 (no limpie el p0.3)
 	return;
 }
 
@@ -81,17 +84,17 @@ void resultado (uint8_t jugada_user, uint8_t jugada_LPC){
 	case 0:
 		printf("Ha habido un empate\n");
 		LPC_GPIO0->FIOSET |= (1<<4);
-		delay();
+		delay(40000000);				//Espera para mostrar valor en LEDs
 		break;
 	case 1:
 		printf("Ha ganado el usuario\n");
 		LPC_GPIO0->FIOSET |= (1<<5);
-		delay();
+		delay(40000000);				//Espera para mantener valor en LEDs
 		break;
 	case -1:
 		printf("Ha ganado el microcontrolador\n");
 		LPC_GPIO0->FIOSET |= (1<<6);
-		delay();
+		delay(40000000);				//Espera para mantener valor en LEDs
 		break;
 	default:
 		printf("Ha ganado Expedition 33\n");	//No debería entrar nunca acá, igual.
@@ -104,6 +107,6 @@ void resultado (uint8_t jugada_user, uint8_t jugada_LPC){
 }
 
 
-void delay(void){
-	for(uint32_t i=0 ; i<4000000 ; i++){};
+void delay(uint32_t time){
+	for(volatile uint32_t i=0 ; i<time ; i++){};
 }
