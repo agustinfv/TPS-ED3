@@ -264,7 +264,18 @@ int main(void)
                    - Esperar a que el botón sea soltado
                    - Pasar a ESTADO_VALIDAR_JUGADA
                    ========================================= */
+                habilitar_lectura_usuario = 1;      // Habilitamos la interrupción para capturar pulsaciones
 
+                if(evento_boton == 1)               // Verificamos si se presionó un botón
+                {
+                    led_mostrar(boton_presionado);  // Mostramos el LED correspondiente al botón presionado
+
+                    if(!boton_sigue_presionado(boton_presionado))   // Esperamos a que el botón sea soltado
+                    {
+                        evento_boton = 0;           // Reseteamos la flag para la próxima pulsación
+                        estado_actual = ESTADO_VALIDAR_JUGADA;
+                    }
+                }
                 break;
             }
 
@@ -281,7 +292,23 @@ int main(void)
                         * indicar error
                         * pasar a GAME_OVER
                    ========================================= */
+                if(boton_presionado == secuencia[indice_jugador])   // Comparamos el botón con el paso esperado
+                {
+                    indice_jugador++;                               // Avanzamos al siguiente paso de la secuencia
 
+                    if(indice_jugador == longitud_secuencia)        // Verificamos si se completó la ronda
+                    {
+                        estado_actual = ESTADO_RONDA_SUPERADA;
+                    }
+                    else
+                    {
+                        estado_actual = ESTADO_ESPERAR_JUGADOR;    
+                    }
+                }
+                else
+                {
+                    estado_actual = ESTADO_GAME_OVER;               
+                }
                 break;
             }
 
@@ -293,7 +320,16 @@ int main(void)
                    - Decidir si pasa a VICTORIA o a
                      GENERAR_PASO
                    ========================================= */
+                nivel++; // Incrementamos el nivel del jugador
 
+                if(longitud_secuencia >= MAX_SECUENCIA) // Verificamos si se alcanzó la longitud máxima
+                {
+                    estado_actual = ESTADO_VICTORIA;
+                }
+                else
+                {
+                    estado_actual = ESTADO_GENERAR_PASO;
+                }
                 break;
             }
 
