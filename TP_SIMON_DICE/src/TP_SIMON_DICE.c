@@ -341,7 +341,8 @@ int main(void)
                      al perder
                    - Definir transición de salida
                    ========================================= */
-
+                leds_apagar_todos();        // Apagamos todos los LEDs
+                estado_actual = ESTADO_IDLE;  // Volvemos al estado de espera
                 break;
             }
 
@@ -353,7 +354,13 @@ int main(void)
                      al ganar
                    - Esperar reinicio del juego si se desea
                    ========================================= */
+                leds_apagar_todos();                // Apagamos todos los LEDs
 
+                if(evento_start == 1)               // Esperamos a que el jugador quiera reiniciar
+                {
+                    evento_start = 0;               // Reseteamos la flag
+                    estado_actual = ESTADO_INICIO;  // Iniciamos una nueva partida
+                }
                 break;
             }
 
