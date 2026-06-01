@@ -1,0 +1,2 @@
+../src/GPIO_config_salida_2.c:11:5:main	64	static
+../src/GPIO_config_salida_2.c:28:6:delay	16	static
