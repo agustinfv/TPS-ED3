@@ -7,10 +7,7 @@
 
 uint32_t			distFront = 100;
 uint32_t			distRear = 100;
-uint8_t				distFrontFlag = 0;
-uint8_t				distRearFlag = 0;
-sensor_state 		sensorFrontState = SAFE_ZONE;
-sensor_state 		sensorRearState = SAFE_ZONE;
+
 
 
 int main(void) {
