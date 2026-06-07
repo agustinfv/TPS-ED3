@@ -62,10 +62,124 @@ void configTimer(LPC_TIM_TypeDef *TIMx, TIM_MODE_OPT mode, TIM_MATCHCFG_Type *ma
 	//Pre habilitacion timer0.0
 	TIM_Init(TIMx,mode,&cfgTimer);
 	TIM_ConfigMatch(TIMx,matchStruct);
-	TIM_Cmd(TIMx,ENABLE);
+	TIM_Cmd(TIMx,DISABLE);
 
 
 }
+
+
+/*
+ * @param[in]    TIMx  Timer selection, debe ser:
+                   - LPC_TIM0: TIMER0 peripheral
+                   - LPC_TIM1: TIMER1 peripheral
+                   - LPC_TIM2: TIMER2 peripheral
+                   - LPC_TIM3: TIMER3 peripheral
+
+ * @param[in]	 CaptureChannel, debe ser un valor entre 0 y 1
+
+ * @param[in] 	 rising, debe ser:
+  					ENABLE: Activa flanco de subida
+  					DISABLE: Desactiva esta funcion
+ * @param[in] 	 falling, debe ser:
+  					ENABLE: Activa flanco de bajada
+  					DISABLE: Desactiva esta funcion
+ * @param[in] 	 Int, debe ser:
+  					ENABLE: Activa la interrupcion
+  					DISABLE: Desactiva esta funcion
+
+ */
+void configCapture(LPC_TIM_TypeDef *Timx, uint32_t CaptureChannel, FunctionalState rising, FunctionalState falling, FunctionalState Int){
+	TIM_TIMERCFG_Type cfgTimerCapture;
+	TIM_CAPTURECFG_Type cfgCapture;
+
+	cfgTimerCapture.PrescaleOption = TIM_PRESCALE_USVAL;
+	cfgTimerCapture.PrescaleValue = 1; //cuenta cada 1uS
+
+	cfgCapture.CaptureChannel = CaptureChannel;
+	cfgCapture.RisingEdge = rising;
+	cfgCapture.FallingEdge = falling;
+	cfgCapture.IntOnCaption = Int;
+
+	TIM_Init(Timx, TIM_TIMER_MODE, &cfgTimerCapture);
+	TIM_ConfigCapture(TIMx, &cfgCapture);
+	TIM_Cmd(Timx,DISABLE);
+
+	TIM_ResetCounter(Timx);
+
+
+}
+/*
+ * @param[in]    TIMx  Timer selection, debe ser:
+                   - LPC_TIM0: TIMER0 peripheral
+                   - LPC_TIM1: TIMER1 peripheral
+                   - LPC_TIM2: TIMER2 peripheral
+                   - LPC_TIM3: TIMER3 peripheral
+
+ *@param[in]	newState, activa el contador para ese determinado Timx, debe ser
+				 - ENABLE
+				 - DISABLE
+
+*/
+void activarContadorTimer(LPC_TIM_TypeDef *Timx, FuncionalState newState){
+	{
+		TIM_Cmd(Timx, newState);
+	}
+
+}
+
+/*
+ * Se encarga habilitar las interrupcion
+ *
+ * @param [in] timer, debe ser:
+  				 - TIMER0
+  				 - TIMER1
+  				 - TIMER2
+  				 - TIMER3
+ */
+void ActivarNVICTimer(TIMERS timer){
+	switch(timer){
+	case 0:
+		NVIC_EnableIRQn(TIMER0_IRQn);
+		break;
+	case 1:
+		NVIC_EnableIRQn(TIMER1_IRQn);
+		break;
+	case 2:
+		NVIC_EnableIRQn(TIMER2_IRQn);
+		break;
+	case 3:
+		NVIC_EnableIRQn(TIMER3_IRQn);
+		break;
+	}
+}
+
+/*
+ * Se encarga deshabilitar la interrupcion
+ *
+ * @param [in] timer, debe ser:
+  				 - TIMER0
+  				 - TIMER1
+  				 - TIMER2
+  				 - TIMER3
+ */
+void DesactivarNVICTimer(TIMERS timer){
+	switch(timer){
+	case 0:
+		NVIC_DisableIRQn(TIMER0_IRQn);
+		break;
+	case 1:
+		NVIC_DisableIRQn(TIMER1_IRQn);
+		break;
+	case 2:
+		NVIC_DisableIRQn(TIMER2_IRQn);
+		break;
+	case 3:
+		NVIC_DisableIRQn(TIMER3_IRQn);
+		break;
+	}
+}
+
+
 
 /*
  * Mi idea en el main es
