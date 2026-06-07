@@ -1,4 +1,3 @@
-#include "timer.h"
 
 /*
  * * @param[in]	 channel Timer channel, debe ser:
