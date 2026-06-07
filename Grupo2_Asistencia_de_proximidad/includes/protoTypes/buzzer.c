@@ -2,8 +2,6 @@
 
 #define LUT_SIZE    32
 #define DAC_CENTER  512     // Mitad de escala del DAC (10 bits)
-#define BUZZER_FRONT_GPIO	(1<<0)	//Pin 0 del PORT0
-#define BUZZER_REAR_GPIO	(1<<1)	//Pin 1 del PORT0
 
 static const uint16_t sineBase[LUT_SIZE] =	//Señal senoidal de base con 100% de amplitud
 {
@@ -14,20 +12,33 @@ static const uint16_t sineBase[LUT_SIZE] =	//Señal senoidal de base con 100% de
 };
 static uint16_t currentLUT[LUT_SIZE];			//Señal que utilizará el DMA
 static uint8_t currentVolume = 100;				//Va de 0 (silencio) a 100 (máximo volumen)
+buzzer_t buzzer_front;
+buzzer_t buzzer_rear;
 
-
-/* Inicializa el Timer2, correspondientes a los Buzzer, con beep default cada 0,5s
- * para cada canal de MATCH.
- * */
+/* Inicializa el Timer1, correspondientes a los Buzzer, que siempre
+ * cuenta cada 1 ms.
+ */
 void Buzzer_Init(void)
 {
-	TIM_MATCH_Type cfgTimer2_MR0:
-	TIM_MATCH_Type cfgTimer2_MR1:
-	cfgTimer2_MR0 = configStructMatch(TIM_MR0_INT, 500000, ENABLE, DISABLE, ENABLE, TIM_EXTMATCH_NOTHING);
-	cfgTimer1_MR1 = configStructMatch(TIM_MR1_INT, 500000, ENABLE, DISABLE, ENABLE, TIM_EXTMATCH_NOTHING);
-	configTimer(LPC_TIMER2, TIM_TIMER_MODE, (&cfgTimer2_MR0));
-	configTimer(LPC_TIMER2, TIM_TIMER_MODE, (&cfgTimer2_MR1));
+	TIM_MATCH_Type cfgTimer1;
+	cfgTimer1 = configStructMatch(TIM_MR0_INT, 1000, ENABLE, DISABLE, ENABLE, TIM_EXTMATCH_NOTHING);
+	configTimer(LPC_TIMER1, TIM_TIMER_MODE, (&cfgTimer1));
 
+	buzzer_front.gpioPort	 = 0;
+	buzzer_front.gpioPin 	 = 0;
+	buzzer_front.id 		 = BUZZER_FRONT;
+	buzzer_front.mode		 = BUZZER_MODE_BEEP;
+	buzzer_front.outputState = 0;
+	buzzer_front.threshold	 = 250;
+	buzzer_front.counter	 = 0;
+
+	buzzer_rear.gpioPort	= 0;
+	buzzer_rear.gpioPin 	= 1;
+	buzzer_rear.id 			= BUZZER_REAR;
+	buzzer_rear.mode		= BUZZER_MODE_BEEP;
+	buzzer_rear.outputState	= 0;
+	buzzer_rear.threshold	= 250;
+	buzzer_rear.counter		= 0;
 }
 
 
@@ -57,44 +68,46 @@ void Buzzer_SetVolume(uint8_t volume)
 /*	De acuerdo a la frecuencia deseada para el correspondiente Buzzer,
  * 	actualiza el Timer que le corresponde a ese Buzzer para definir el intervalo
  * 	entre los pitidos
- * 	Nota:	Dado que utilizaremos el Timer como Toggle para producir el intervalo entre los pitidos,
- * 			el Timer necesita el doble de la frecuencia deseada para respetarla, razón por la que
- * 			se lo multiplica por 2 en matchValue
+ * 	Nota:	Dado que utilizaremos un toggle para producir el intervalo entre los pitidos,
+ * 			necesitaremos el doble de la frecuencia deseada para respetarla, razón por la que
+ * 			se la multiplica por 2 en el respectivo threshold.
  */
-void Buzzer_SetBeepRate(uint8_t MatchChannel, uint32_t rate)
+void Buzzer_SetBeepRate(uint8_t id, uint32_t rate)
 {
-    uint32_t matchValue;
 
     if(rate <= 0 | rate >= 100000)
     {
         return;
     }
+    if(id == BUZZER_FRONT)
+    {
+    	buzzer_front.threshold = 1/(rate*2);
+    }
+    if(id == BUZZER_REAR)
+    {
+    	buzzer_rear.threshold = 1/(rate*2);
+    }
 
-
-    matchValue = (25*10^6)/(25*rate*2);
-
-    if(MatchChannel = 0) TIM_UpdateMatchValue(LPC_TIM2,TIM_MR0_INT, matchValue);
-    if(MatchChannel = 1) TIM_UpdateMatchValue(LPC_TIM2,TIM_MR1_INT, matchValue);
 }
 
-/* Actualiza el buzzer correspondiente de acuerdo al estado en el que se encuentre este	*/
-void Buzzer_update(uint8_t buzzer_id, uint8_t buzzer_mode, uint8_t outputState)
+/* Actualiza el buzzer correspondiente de acuerdo al estado en el que se encuentre este y la salida al transistor	*/
+void Buzzer_update(uint8_t id)
 {
-	if(buzzer_id == BUZZER_FRONT)
+	if(id == BUZZER_FRONT)
 	{
-		switch(buzzer_mode)
+		switch(buzzer_front.mode)
 		{
 		case BUZZER_MODE_OFF:
-			GPIO_ClearValue(0, BUZZER_FRONT_GPIO);
+			GPIO_ClearValue(buzzer_front.gpioPort, (1<< buzzer_front.gpioPin));
 			break;
 
 		case BUZZER_MODE_BEEP:
-			if(outputState) GPIO_SetValue(0, BUZZER_FRONT_GPIO);
-			if(!outputState) GPIO_ClearValue(0, BUZZER_FRONT_GPIO);
+			if(buzzer_front.outputState) GPIO_SetValue(buzzer_front.gpioPort, (1<< buzzer_front.gpioPin));
+			if(!(buzzer_front.outputState)) GPIO_ClearValue((buzzer_front.gpioPort), (1<<buzzer_front.gpioPin));
 			break;
 
 		case BUZZER_MODE_CONTINUOUS:
-			GPIO_SetValue(0, BUZZER_FRONT_GPIO);
+			GPIO_SetValue(buzzer_front.gpioPort, (1<<buzzer_front.gpioPin));
 			break;
 
 		default:
@@ -102,21 +115,21 @@ void Buzzer_update(uint8_t buzzer_id, uint8_t buzzer_mode, uint8_t outputState)
 		}
 
 	}
-	if(buzzer_id == BUZZER_REAR)
+	if(id == BUZZER_REAR)
 	{
-		switch(buzzer_mode)
+		switch(buzzer_rear.mode)
 		{
 		case BUZZER_MODE_OFF:
-			GPIO_ClearValue(0, BUZZER_REAR_GPIO);
+			GPIO_ClearValue(buzzer_rear.gpioPort, (1<< buzzer_rear.gpioPin));
 			break;
 
 		case BUZZER_MODE_BEEP:
-			if(outputState) GPIO_SetValue(0, BUZZER_REAR_GPIO);
-			if(!outputState) GPIO_ClearValue(0, BUZZER_REAR_GPIO);
+			if(buzzer_rear.outputState) GPIO_SetValue(buzzer_rear.gpioPort, (1<< buzzer_rear.gpioPin));
+			if(!(buzzer_rear.outputState)) GPIO_ClearValue((buzzer_rear.gpioPort), (1<<buzzer_rear.gpioPin));
 			break;
 
 		case BUZZER_MODE_CONTINUOUS:
-			GPIO_SetValue(0, BUZZER_REAR_GPIO);
+			GPIO_SetValue(buzzer_rear.gpioPort, (1<<buzzer_rear.gpioPin));
 			break;
 
 		default:
@@ -125,5 +138,20 @@ void Buzzer_update(uint8_t buzzer_id, uint8_t buzzer_mode, uint8_t outputState)
 
 	}
 }
+/*	Incrementa los contadores de ambos buzzer.
+ */
+void Buzzer_CounterIncrement(void)
+{
+	buzzer_front.counter ++;
+	buzzer_rear.counter ++;
+}
 
+/*	Actualiza el threshold del buzzer especificado.
+ */
+void Buzzer_SetTreshold(buzzer_id id, uint32_t threshold)
+{
+	if(threshold <= 0) return;
+	if(id == BUZZER_FRONT) buzzer_front.threshold = threshold;
+	if(id == BUZZER_REAR) buzzer_rear.threshold = threshold;
+}
 
