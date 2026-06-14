@@ -1,6 +1,8 @@
 #ifndef HCSR04_H
 #define HCSR04_H
 
+#include "timer.h"
+
 #define ECHO_FRONT_PIN (1<<26)		//Pin ECHO del sensor frontal  en el 1.26 (CAP0.0)
 #define ECHO_REAR_PIN (1<<27)		//Pin ECHO del sensor trasero  en el 1.27 (CAP0.1
 
@@ -37,6 +39,11 @@ typedef struct
 	uint32_t	 distance;	/*	Distancia a la que se encuentra el objeto
 							 *	del respectivo sensor. */
 }sensor_t;
+
+/*	Configura el timer para que los sensores hagan la lectura de la distancia
+ * (envío de la onda ultrasónica)
+ */
+void configSensor(void);
 
 /*	Inicializa con valores default ambos sensores: el frontal y trasero.
  * 	Ambos comienzan en SAFE_ZONE, cada uno con su propia ID y distance = 100.

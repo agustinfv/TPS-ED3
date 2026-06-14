@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-
-
-#include "lpc17xx_timer.h"
-
-#define CR0 0
-#define CR1 1
-=======
 #ifndef TIMER_H
 #define TIMER_H
 
@@ -27,4 +19,5 @@ void configCapture(LPC_TIM_TypeDef *Timx, uint32_t CaptureChannel, FunctionalSta
 void activarContadorTimer(LPC_TIM_TypeDef *Timx, FuncionalState newState);
 void ActivarNVICTimer(TIMERS timer)
 void DesactivarNVICTimer(TIMERS timer);
->>>>>>> aa751543173355e7461bde1ec6eeff3fc79a4e30
+
+#endif

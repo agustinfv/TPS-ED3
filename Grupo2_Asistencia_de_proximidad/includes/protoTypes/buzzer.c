@@ -23,6 +23,8 @@ void Buzzer_Init(void)
 	TIM_MATCH_Type cfgTimer1;
 	cfgTimer1 = configStructMatch(TIM_MR0_INT, 1000, ENABLE, DISABLE, ENABLE, TIM_EXTMATCH_NOTHING);
 	configTimer(LPC_TIMER1, TIM_TIMER_MODE, (&cfgTimer1));
+	activarContadorTimer(LPC_TIM1, ENABLE);
+	activarNVICTimer(TIMER1);
 
 	buzzer_front.gpioPort	 = 0;
 	buzzer_front.gpioPin 	 = 0;
@@ -81,11 +83,11 @@ void Buzzer_SetBeepRate(uint8_t id, uint32_t rate)
     }
     if(id == BUZZER_FRONT)
     {
-    	buzzer_front.threshold = 1/(rate*2);
+    	buzzer_front.threshold = 1000/(rate*2);
     }
     if(id == BUZZER_REAR)
     {
-    	buzzer_rear.threshold = 1/(rate*2);
+    	buzzer_rear.threshold = 1000/(rate*2);
     }
 
 }
