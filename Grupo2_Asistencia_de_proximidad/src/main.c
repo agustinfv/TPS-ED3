@@ -76,7 +76,7 @@ void TIMER0_IRQHandler(void)
 
     if(TIM_GetIntCaptureStatus(LPC_TIM0, TIM_CR0_INT))
     {
-        echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_CR0_INT);
+        echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_COUNTER_INCAP0);
 
         if(GPIO_ReadValue(ECHO_FRONT_PORT) & ECHO_FRONT_MASK)
         {
@@ -87,12 +87,12 @@ void TIMER0_IRQHandler(void)
             echoDuration = echoVal - frontStart;
             PA_SetState(SENSOR_FRONT, echoDuration);
         }
-        TIM_ClearIntCapturePending(LPC_TIM0, TIM_CR0_INT);
+        TIM_ClearIntPending(LPC_TIM0, TIM_CR0_INT);
     }
 
     if(TIM_GetIntCaptureStatus(LPC_TIM0, TIM_CR1_INT))
     {
-        echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_CR1_INT);
+        echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_COUNTER_INCAP1);
 
         if(GPIO_ReadValue(ECHO_REAR_PORT) & ECHO_REAR_MASK)
         {
@@ -103,7 +103,7 @@ void TIMER0_IRQHandler(void)
             echoDuration = echoVal - rearStart;
             PA_SetState(SENSOR_REAR, echoDuration);
         }
-        TIM_ClearIntCapturePending(LPC_TIM0, TIM_CR1_INT);
+        TIM_ClearIntPending(LPC_TIM0, TIM_CR1_INT);
     }
 }
 
