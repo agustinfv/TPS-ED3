@@ -34,7 +34,6 @@ int main(void)
     Transistor_Init();
     Buzzer_Init();
 
-
     PA_Init();
     SC_Init();
 
@@ -116,8 +115,13 @@ void TIMER0_IRQHandler(void)
  * @note     USW.2.1.1.1
  **********************************************************************************/
 void TIMER1_IRQHandler(void)
-{
-    SC_ShowState();
+{	static uint8_t test_counter1 = 0;
+	test_counter1 ++;
+	if(test_counter1 >= 100)
+	{
+	    SC_ShowState();
+	    test_counter1 = 0;
+	}
     HCSR04_TriggerUpdate();
     TIM_ClearIntPending(LPC_TIM1, TIM_MR0_INT);
 }

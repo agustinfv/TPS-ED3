@@ -59,6 +59,7 @@ void HCSR04_Init(void)
 {
 	HCSR04_ConfigHardware();
     TIMER_EnableCounter(LPC_TIM0, ENABLE);
+    NVIC_SetPriority(TIMER0_IRQn, 1);
     TIMER_EnableNVIC(TIMER0);
 }
 
