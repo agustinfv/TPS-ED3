@@ -73,7 +73,7 @@ void TIMER0_IRQHandler(void)
     uint32_t        echoVal;
     uint32_t        echoDuration;
 
-    if(TIM_GetIntCaptureStatus(LPC_TIM0, TIM_CR0_INT))
+    if(TIM_GetIntStatus(LPC_TIM0, TIM_CR0_INT))
     {
         echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_COUNTER_INCAP0);
 
@@ -89,7 +89,7 @@ void TIMER0_IRQHandler(void)
         TIM_ClearIntPending(LPC_TIM0, TIM_CR0_INT);
     }
 
-    if(TIM_GetIntCaptureStatus(LPC_TIM0, TIM_CR1_INT))
+    if(TIM_GetIntStatus(LPC_TIM0, TIM_CR1_INT))
     {
         echoVal = TIM_GetCaptureValue(LPC_TIM0, TIM_COUNTER_INCAP1);
 

@@ -21,8 +21,8 @@ void LED_Init(void)
     GPIO_ConfigPin(LED_REAR_PORT,  LED_REAR_R_PIN,  1);
     GPIO_ConfigPin(LED_REAR_PORT,  LED_REAR_G_PIN,  1);
 
-    GPIO_ClearValue(LED_FRONT_PORT, (1 << LED_FRONT_R_PIN) | (1 << LED_FRONT_G_PIN));
-    GPIO_ClearValue(LED_REAR_PORT, (1 << LED_REAR_R_PIN)  | (1 << LED_REAR_G_PIN));
+    GPIO_SetValue(LED_FRONT_PORT, (1 << LED_FRONT_R_PIN) | (1 << LED_FRONT_G_PIN));
+    GPIO_SetValue(LED_REAR_PORT, (1 << LED_REAR_R_PIN)  | (1 << LED_REAR_G_PIN));
 }
 
 /*******************************************************************************//**

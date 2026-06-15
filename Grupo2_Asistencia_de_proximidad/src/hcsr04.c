@@ -90,16 +90,27 @@ void HCSR04_TriggerUpdate(void)
     static uint32_t trigCounter = 0;
 
     trigCounter++;
-
-    if(trigCounter == TRIG_PERIOD_MS)
+/*
+    if(trigCounter >= TRIG_PERIOD_MS)
     {
         GPIO_SetValue(TRIG_FRONT_PORT, (1 << TRIG_FRONT_PIN));
         GPIO_SetValue(TRIG_REAR_PORT,  (1 << TRIG_REAR_PIN));
     }
-    else if(trigCounter >= (TRIG_PERIOD_MS + TRIG_DURATION_MS))
+    if(trigCounter >= (TRIG_PERIOD_MS + TRIG_DURATION_MS))
     {
         GPIO_ClearValue(TRIG_FRONT_PORT, (1 << TRIG_FRONT_PIN));
         GPIO_ClearValue(TRIG_REAR_PORT,  (1 << TRIG_REAR_PIN));
+        trigCounter = 0;
+        */
+    if(trigCounter <= TRIG_PERIOD_MS)
+    {
+        GPIO_ClearValue(TRIG_FRONT_PORT, (1 << TRIG_FRONT_PIN));
+        GPIO_ClearValue(TRIG_REAR_PORT,  (1 << TRIG_REAR_PIN));
+    }
+    else if(trigCounter > TRIG_PERIOD_MS)
+    {
+        GPIO_SetValue(TRIG_FRONT_PORT, (1 << TRIG_FRONT_PIN));
+        GPIO_SetValue(TRIG_REAR_PORT,  (1 << TRIG_REAR_PIN));
         trigCounter = 0;
     }
 }
