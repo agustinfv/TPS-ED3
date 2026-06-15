@@ -35,7 +35,7 @@ static void Buzzer_ConfigHardware(void)
 {
     TIM_MATCHCFG_Type cfgTimer1;
 
-    cfgTimer1 = TIMER_ConfigStructMatch(TIM_MR0_INT, 10, ENABLE, DISABLE,
+    cfgTimer1 = TIMER_ConfigStructMatch(TIM_MR0_INT, 1000, ENABLE, DISABLE,
             ENABLE, TIM_EXTMATCH_NOTHING);
     TIMER_Config(LPC_TIM1, TIM_TIMER_MODE, &cfgTimer1);
     TIMER_EnableCounter(LPC_TIM1, ENABLE);
