@@ -1,0 +1,3 @@
+../src/proximity_assistant.c:29:6:PA_Init	4	static
+../src/proximity_assistant.c:50:6:PA_SetState	24	static
+../src/proximity_assistant.c:87:6:PA_ManageState	24	static

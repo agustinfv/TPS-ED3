@@ -1,0 +1,5 @@
+/Users/agustin/Downloads/CMSISv2p00_LPC17xx/inc/core_cm3.h:1012:22:NVIC_SetPriority	16	static
+../src/hcsr04.c:30:13:HCSR04_ConfigHardware	56	static
+../src/hcsr04.c:58:6:HCSR04_Init	8	static
+../src/hcsr04.c:75:10:HCSR04_GetDistanceCm	16	static
+../src/hcsr04.c:88:6:HCSR04_TriggerUpdate	8	static

@@ -1,0 +1,5 @@
+../src/sound_ctrl.c:25:6:SC_Init	4	static
+../src/sound_ctrl.c:46:6:SC_SetMode	16	static
+../src/sound_ctrl.c:56:6:SC_SetVolume	16	static
+../src/sound_ctrl.c:68:6:SC_SetThreshold	16	static
+../src/sound_ctrl.c:90:6:SC_ShowState	16	static
