@@ -1,0 +1,2 @@
+../src/gpio.c:23:6:GPIO_ConfigPin	24	static
+../src/gpio.c:52:6:PINSEL_SetPinFunc	24	static

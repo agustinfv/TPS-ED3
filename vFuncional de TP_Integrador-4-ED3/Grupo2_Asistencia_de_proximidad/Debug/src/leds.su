@@ -1,0 +1,2 @@
+../src/leds.c:18:6:LED_Init	8	static
+../src/leds.c:40:6:LED_SetColor	24	static
