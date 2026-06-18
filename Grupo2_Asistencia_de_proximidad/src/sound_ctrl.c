@@ -4,7 +4,7 @@
  * @details  Implementa la lógica de intercalado, pitidos e inicialización lógica,
  *           utilizando los drivers de transistor.h y buzzer.h para aplicar los
  *           cambios en el hardware (transistores y DAC).
- * @note     ESW.2.1.5
+ * @note     ESW.2.1.3
  **********************************************************************************/
 
 #include "sound_ctrl.h"
@@ -20,7 +20,7 @@ buzzer_t buzzer_rear;
  * @brief    Inicializa los estados lógicos de ambos buzzers.
  * @details  Carga valores por defecto: buzzers apagados, pitido de 2 Hz, volumen
  * 			 nulo, etc.
- * @note     USW.2.1.5.7
+ * @note     USW.2.1.3.1
  **********************************************************************************/
 void SC_Init(void)
 {
@@ -201,7 +201,7 @@ void SC_ShowState(void)
                     shift = 0;
 
                     buzzer_rear.action = MUTE;
-                    Transistor_SetState(BUZZER_REAR, PLAY);
+                    Transistor_SetState(BUZZER_REAR, MUTE);
 
                     buzzer_front.action = PLAY;
                     Buzzer_ApplyVolume(buzzer_front.volume);
@@ -215,7 +215,9 @@ void SC_ShowState(void)
     {
         buzzer_front.action = MUTE;
         buzzer_rear.action  = MUTE;
-        Transistor_SetState(BUZZER_FRONT, PLAY);
-        Transistor_SetState(BUZZER_REAR, PLAY);
+        Transistor_SetState(BUZZER_FRONT, MUTE);
+        Buzzer_ApplyVolume(buzzer_front.volume);
+        Transistor_SetState(BUZZER_REAR, MUTE);
+        Buzzer_ApplyVolume(buzzer_rear.volume);
     }
 }

@@ -70,8 +70,8 @@ void TIMER0_IRQHandler(void)
 {
     static uint32_t frontStart = 0;
     static uint32_t rearStart  = 0;
-    uint32_t        echoVal;
-    uint32_t        echoDuration;
+    uint32_t        echoVal= 0;
+    uint32_t        echoDuration =0;
 
     if(TIM_GetIntStatus(LPC_TIM0, TIM_CR0_INT))
     {
@@ -114,14 +114,8 @@ void TIMER0_IRQHandler(void)
  *           HCSR04_TriggerUpdate(), que genera los pulsos TRIG para los HC-SR04.
  * @note     USW.2.1.1.1
  **********************************************************************************/
-void TIMER1_IRQHandler(void)
-{	static uint8_t test_counter1 = 0;
-	test_counter1 ++;
-	if(test_counter1 >= 100)
-	{
-	    SC_ShowState();
-	    test_counter1 = 0;
-	}
+void TIMER1_IRQHandler(void){
+	SC_ShowState();
     HCSR04_TriggerUpdate();
     TIM_ClearIntPending(LPC_TIM1, TIM_MR0_INT);
 }

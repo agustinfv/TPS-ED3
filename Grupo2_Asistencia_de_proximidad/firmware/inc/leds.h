@@ -10,7 +10,7 @@
 #ifndef LEDS_H
 #define LEDS_H
 
-#include "proximity_assistant.h"
+#include "hcsr04.h"
 #include "gpio.h"
 
 

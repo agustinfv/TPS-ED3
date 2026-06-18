@@ -34,9 +34,20 @@
  * 			 continua, y configura y activa el canal 0
  * @note     USW.2.1.14.1
  *
- * @param lut      Puntero al array con la señal (valores de 32 bits, << 6).
+ * @param lut      Puntero constante al array con la señal en memoria Flash o RAM.
  * @param lutSize  Cantidad de muestras de la señal.
  **********************************************************************************/
-void DMA_Config(uint32_t *lut, uint32_t lutSize);
+void DMA_Config(const uint32_t *lut, uint32_t lutSize);
+
+/*******************************************************************************//**
+ * @brief    Actualiza la fuente de datos (LUT) y recarga el canal DMA.
+ * @details  Actualiza la LLI para apuntar a la nueva tabla, recarga los registros
+ *           del canal (SrcAddr, DstAddr, LLI, Control) desde la LLI y reactiva el
+ *           DMA. Se utiliza para cambiar el volumen o sonido en tiempo real.
+ * @note     USW.2.1.14.1
+ *
+ * @param lut  Puntero constante a la nueva tabla senoidal a reproducir.
+ **********************************************************************************/
+void DMA_Reload(const uint32_t *lut);
 
 #endif

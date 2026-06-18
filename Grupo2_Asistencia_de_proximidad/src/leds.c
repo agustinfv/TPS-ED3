@@ -11,7 +11,8 @@
 /*******************************************************************************//**
  * @brief    Configura los pines de los LEDs RGB como salidas.
  * @details  Configura los pines P2.0, P2.1 (Frontal) y P2.2, P2.3 (Trasero) como
- *           salidas GPIO y los inicializa en nivel bajo (apagados).
+ *           salidas GPIO y los inicializa en nivel bajo (apagados). Hecho para
+ *           leds de catodo comun
  * @note     USW.2.1.6.1 / 2.1.10.1
  **********************************************************************************/
 void LED_Init(void)
@@ -21,8 +22,8 @@ void LED_Init(void)
     GPIO_ConfigPin(LED_REAR_PORT,  LED_REAR_R_PIN,  1);
     GPIO_ConfigPin(LED_REAR_PORT,  LED_REAR_G_PIN,  1);
 
-    GPIO_SetValue(LED_FRONT_PORT, (1 << LED_FRONT_R_PIN) | (1 << LED_FRONT_G_PIN));
-    GPIO_SetValue(LED_REAR_PORT, (1 << LED_REAR_R_PIN)  | (1 << LED_REAR_G_PIN));
+    GPIO_ClearValue(LED_FRONT_PORT, (1 << LED_FRONT_R_PIN) | (1 << LED_FRONT_G_PIN));
+    GPIO_ClearValue(LED_REAR_PORT, (1 << LED_REAR_R_PIN)  | (1 << LED_REAR_G_PIN));
 }
 
 /*******************************************************************************//**
@@ -30,7 +31,7 @@ void LED_Init(void)
  * @details  Controla los pines rojo y verde del sensor indicado para formar el
  *           color pedido en el LED RGB, apagando ambos para LED_COLOR_OFF,
  *           activando el verde para LED_COLOR_GREEN, etc. Hecho para LEDs RGB de
- *           ánod0 común
+ *           catodo común
  * @note     USW.2.1.6.1 / 2.1.10.1
  *
  * @param id    SENSOR_FRONT o SENSOR_REAR.
@@ -58,22 +59,22 @@ void LED_SetColor(sensor_id id, led_color color)
     switch(color)
     {
     case LED_COLOR_OFF:
-        GPIO_SetValue(port, (1 << rPin));
-        GPIO_SetValue(port, (1 << gPin));
-        break;
-
-    case LED_COLOR_GREEN:
-        GPIO_SetValue(port, (1 << rPin));
+        GPIO_ClearValue(port, (1 << rPin));
         GPIO_ClearValue(port, (1 << gPin));
         break;
 
+    case LED_COLOR_GREEN:
+        GPIO_ClearValue(port, (1 << rPin));
+        GPIO_SetValue(port, (1 << gPin));
+        break;
+
     case LED_COLOR_YELLOW:
-        GPIO_ClearValue(port, (1 << rPin) | (1 << gPin));
+        GPIO_SetValue(port, (1 << rPin) | (1 << gPin));
         break;
 
     case LED_COLOR_RED:
-        GPIO_ClearValue(port, (1 << rPin));
-        GPIO_SetValue(port, (1 << gPin));
+        GPIO_SetValue(port, (1 << rPin));
+        GPIO_ClearValue(port, (1 << gPin));
         break;
     default:
     	break;

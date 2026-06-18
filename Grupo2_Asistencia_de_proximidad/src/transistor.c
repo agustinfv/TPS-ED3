@@ -38,12 +38,12 @@ void Transistor_SetState(buzzer_id id, buzzer_action action)
 {
     if(id == BUZZER_FRONT)
     {
-        if(action) GPIO_ClearValue(TRANSISTOR_FRONT_PORT, (1 << TRANSISTOR_FRONT_PIN));
-        else GPIO_SetValue(TRANSISTOR_FRONT_PORT,   (1 << TRANSISTOR_FRONT_PIN));
+        if(action) GPIO_SetValue(TRANSISTOR_FRONT_PORT, (1 << TRANSISTOR_FRONT_PIN));
+        else GPIO_ClearValue(TRANSISTOR_FRONT_PORT,   (1 << TRANSISTOR_FRONT_PIN));
     }
     else
     {
-        if(action) GPIO_ClearValue(TRANSISTOR_REAR_PORT, (1 << TRANSISTOR_REAR_PIN));
-        else GPIO_SetValue(TRANSISTOR_REAR_PORT,   (1 << TRANSISTOR_REAR_PIN));
+        if(action) GPIO_SetValue(TRANSISTOR_REAR_PORT, (1 << TRANSISTOR_REAR_PIN));
+        else GPIO_ClearValue(TRANSISTOR_REAR_PORT,   (1 << TRANSISTOR_REAR_PIN));
     }
 }

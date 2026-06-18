@@ -2,7 +2,7 @@
  * @file     dma.c
  * @brief    Implementación del driver DMA para reproducción continua de la señal.
  * @details  Configura el canal 0 del DMA en modo M2P con una LLI circular que
- * 			 permite reproducir la senoidal indefinidament.
+ * 			 permite reproducir la senoidal indefinidamente.
  * @note     ESW.2.1.14
  **********************************************************************************/
 
@@ -26,7 +26,8 @@
 /*******************************************************************************//**
  * @brief    Variable de configuración de la LLI para el DMA.
  **********************************************************************************/
-static GPDMA_LLI_Type dacLLI;
+static GPDMA_LLI_Type  dacLLI;
+static uint8_t         dmaReady = 0;
 
 /*******************************************************************************//**
  * @brief    Inicializa el DMA y configura el canal 0 para enviar la señal al DAC
@@ -38,10 +39,10 @@ static GPDMA_LLI_Type dacLLI;
  *           GPDMA_Setup() y GPDMA_ChannelCmd().
  * @note     USW.2.1.14.1
  *
- * @param lut      Puntero al array con la señal (valores de 32 bits, << 6).
- * @param lutSize  Cantidad de muestras de la señal.
+ * @param lut      Puntero constante al array con la señal en memoria Flash o RAM.
+ * @param size     Cantidad de muestras de la señal.
  **********************************************************************************/
-void DMA_Config(uint32_t *lut, uint32_t size)
+void DMA_Config(const uint32_t *lut, uint32_t size)
 {
 	GPDMA_Channel_CFG_Type dmaCfg;
 
@@ -63,5 +64,33 @@ void DMA_Config(uint32_t *lut, uint32_t size)
 	dmaCfg.DMALLI        = (uint32_t)(&dacLLI);
 
 	GPDMA_Setup(&dmaCfg);
+	LPC_GPDMACH0->DMACCControl = DMA_CONTROL(size) | (1UL << 31);
+	GPDMA_ChannelCmd(DMA_CHANNEL_DAC, ENABLE);
+	dmaReady = 1;
+}
+
+/*******************************************************************************//**
+ * @brief    Actualiza la fuente de datos (LUT) y recarga el canal DMA.
+ * @details  Actualiza la dirección de origen (SrcAddr) de la LLI para apuntar
+ *           a la nueva tabla de señal. Luego, deshabilita temporalmente el canal
+ *           (opcional/interno del hardware en este caso, se actualizan registros
+ *           directamente) y recarga los registros del DMA desde dacLLI,
+ *           reactivándolo inmediatamente. Esto permite un cambio de tabla en
+ *           tiempo real.
+ * @note     USW.2.1.14.1
+ *
+ * @param lut  Puntero constante a la nueva tabla senoidal a reproducir.
+ **********************************************************************************/
+void DMA_Reload(const uint32_t *lut)
+{
+	if(!dmaReady) return;
+
+	dacLLI.SrcAddr = (uint32_t)lut;
+
+	GPDMA_ChannelCmd(DMA_CHANNEL_DAC, DISABLE);
+	LPC_GPDMACH0->DMACCSrcAddr  = dacLLI.SrcAddr;
+	LPC_GPDMACH0->DMACCDestAddr = dacLLI.DstAddr;
+	LPC_GPDMACH0->DMACCLLI      = (uint32_t)&dacLLI;
+	LPC_GPDMACH0->DMACCControl  = dacLLI.Control | (1UL << 31);
 	GPDMA_ChannelCmd(DMA_CHANNEL_DAC, ENABLE);
 }

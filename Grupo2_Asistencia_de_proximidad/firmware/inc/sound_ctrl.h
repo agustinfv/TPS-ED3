@@ -3,7 +3,7 @@
  * @brief    Controlador de la lógica del sistema de audio.
  * @details  Maneja la lógica de los sonidos: intercalado, volumen, y
  *           modos de pitido.
- * @note     ESW.2.1.5
+ * @note     ESW.2.1.3
  **********************************************************************************/
 
 #ifndef SOUND_CTRL_H
@@ -35,16 +35,6 @@
 #define THRESHOLD_WARNING_LOW   250
 #define THRESHOLD_WARNING_HIGH  125
 #define THRESHOLD_DANGER_LOW     62
-
-/*******************************************************************************//**
- * @brief    Enum que indica si el buzzer se silencia o suena.
- **********************************************************************************/
-
-typedef enum
-{
-	MUTE,
-	PLAY
-}buzzer_action;
 
 /*******************************************************************************//**
  * @brief    Modos de los pitidos.

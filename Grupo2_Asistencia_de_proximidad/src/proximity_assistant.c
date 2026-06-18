@@ -52,7 +52,6 @@ void PA_SetState(sensor_id id, uint32_t time_us)
     uint32_t dist;
 
     dist = HCSR04_GetDistanceCm(time_us);
-
     if(id == SENSOR_FRONT)
     {
         sensor_front.distance = dist;
@@ -90,19 +89,20 @@ void PA_ManageState(sensor_id id)
     uint32_t     dist;
     sensor_state state;
     buzzer_id    buzzer;
-
     if(id == SENSOR_FRONT)
     {
         dist   = sensor_front.distance;
         state  = sensor_front.state;
         buzzer = BUZZER_FRONT;
     }
+
     else
     {
         dist   = sensor_rear.distance;
         state  = sensor_rear.state;
-        buzzer = BUZZER_REAR;
+       buzzer = BUZZER_REAR;
     }
+
 
     switch(state)
     {

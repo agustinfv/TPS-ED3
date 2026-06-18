@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 #include "gpio.h"
-#include "sound_ctrl.h"
+#include "buzzer.h"
 
 /*******************************************************************************//**
  * @brief    Macro con los puertos y pines correspondientes para cada sensor.
