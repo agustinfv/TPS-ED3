@@ -1,0 +1,8 @@
+/Users/agustin/Downloads/CMSISv2p00_LPC17xx/inc/core_cm3.h:928:22:NVIC_EnableIRQ	16	static
+/Users/agustin/Downloads/CMSISv2p00_LPC17xx/inc/core_cm3.h:941:22:NVIC_DisableIRQ	16	static
+../src/timer.c:32:19:TIMER_ConfigStructMatch	40	static
+../src/timer.c:60:6:TIMER_Config	32	static
+../src/timer.c:86:6:TIMER_ConfigCapture	32	static
+../src/timer.c:108:6:TIMER_EnableCounter	16	static
+../src/timer.c:122:6:TIMER_EnableNVIC	16	static
+../src/timer.c:152:6:TIMER_DisableNVIC	16	static
