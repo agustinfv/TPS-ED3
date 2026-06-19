@@ -1,0 +1,2 @@
+../src/dma.c:45:6:DMA_Config	56	static
+../src/dma.c:80:6:DMA_Reload	8	static
